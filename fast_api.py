@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 import sqlite3
 from datetime import datetime
 import json
@@ -137,3 +138,13 @@ async def config(request: Request):
 async def catch_all(request: Request, path: str):
     await log_request(request, 404)
     return {"error": "Not found"}
+
+@app.get("/download-logs")
+async def download_logs():
+    return FileResponse(CSV_PATH, filename="request_logs.csv")
+
+@app.post("/clear-logs")
+async def clear_logs():
+    open(CSV_PATH, "w").close()
+    ensure_csv_exists()
+    return {"message": "Logs cleared"}
