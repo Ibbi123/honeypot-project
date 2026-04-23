@@ -133,12 +133,6 @@ async def config(request: Request):
     await log_request(request, 404)
     return {"error": "Not found"}
 
-
-@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def catch_all(request: Request, path: str):
-    await log_request(request, 404)
-    return {"error": "Not found"}
-
 @app.get("/download-logs")
 async def download_logs():
     return FileResponse(CSV_PATH, filename="request_logs.csv")
@@ -148,3 +142,8 @@ async def clear_logs():
     open(CSV_PATH, "w").close()
     ensure_csv_exists()
     return {"message": "Logs cleared"}
+
+@app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def catch_all(request: Request, path: str):
+    await log_request(request, 404)
+    return {"error": "Not found"}
