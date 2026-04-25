@@ -52,7 +52,8 @@ ensure_csv_exists()
 
 
 async def log_request(request: Request, status_code: int) -> None:
-    ip_address = request.client.host if request.client else "unknown"
+    forwarded_for = request.headers.get("x-forwarded-for")
+    ip_address = forwarded_for.split(",")[0].strip() if forwarded_for else (request.client.host if request.client else "unknown")
     timestamp = datetime.utcnow().isoformat()
     endpoint = request.url.path
     method = request.method
